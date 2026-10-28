@@ -1,0 +1,122 @@
+/* ==========================================================================
+   GG Sports-Nature — jetons de conception
+   Palette « naturelle » : tons sable, zones de verdures naturelles,
+   couleurs chaudes / pastelles, contraste suffisant (§20).
+   ========================================================================== */
+
+:root {
+  /* --- Surfaces --- */
+  --sand-25: #fdfbf7;
+  --sand-50: #faf7f0;
+  --sand-100: #f4eee2;
+  --sand-200: #eae1cf;
+  --sand-300: #ddd0b8;
+  --sand-400: #c9b795;
+
+  /* --- Verdures --- */
+  --forest-700: #1e4034;
+  --forest-600: #27503f;
+  --forest-500: #2f5d4a;
+  --forest-400: #41775e;
+  --forest-300: #6b9c81;
+  --forest-200: #a8c7b6;
+  --forest-100: #dbeae1;
+
+  /* --- Accent chaud --- */
+  --clay-600: #a8562c;
+  --clay-500: #c4703f;
+  --clay-400: #d98d5f;
+  --clay-200: #f0cdb4;
+  --clay-100: #fae7da;
+
+  /* --- Eau --- */
+  --water-700: #17505f;
+  --water-600: #1f6776;
+  --water-500: #2e8296;
+  --water-300: #7cb6c4;
+  --water-100: #d9edf2;
+
+  /* --- Ciel / info --- */
+  --sky-500: #4a7fb5;
+  --sky-200: #cfe0f0;
+
+  /* --- Sémantique --- */
+  --ok-600: #2f7d55;
+  --ok-100: #dcf0e4;
+  --warn-600: #b5761a;
+  --warn-100: #fbeed2;
+  --danger-600: #b3402f;
+  --danger-100: #fbe0dc;
+
+  /* --- Texte --- */
+  --ink-900: #1d1a16;
+  --ink-800: #2c2823;
+  --ink-700: #423d36;
+  --ink-600: #5c554b;
+  --ink-500: #7a7267;
+  --ink-400: #9a9186;
+  --ink-300: #b8b0a4;
+
+  /* --- Lignes & ombres --- */
+  --line: #e6ddcd;
+  --line-strong: #d6cab3;
+  --card: #fffdf9;
+  --card-raised: #ffffff;
+
+  --shadow-xs: 0 1px 2px rgba(60, 46, 28, 0.05);
+  --shadow-sm: 0 1px 3px rgba(60, 46, 28, 0.06), 0 1px 2px rgba(60, 46, 28, 0.04);
+  --shadow-md: 0 4px 12px rgba(60, 46, 28, 0.07), 0 1px 3px rgba(60, 46, 28, 0.05);
+  --shadow-lg: 0 12px 32px rgba(60, 46, 28, 0.09), 0 2px 8px rgba(60, 46, 28, 0.05);
+  --shadow-xl: 0 24px 60px rgba(45, 34, 20, 0.14), 0 4px 14px rgba(45, 34, 20, 0.07);
+
+  /* --- Rayons --- */
+  --r-xs: 6px;
+  --r-sm: 9px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 20px;
+  --r-2xl: 26px;
+  --r-pill: 999px;
+
+  /* --- Rythme --- */
+  --gap-1: 4px;
+  --gap-2: 8px;
+  --gap-3: 12px;
+  --gap-4: 16px;
+  --gap-5: 20px;
+  --gap-6: 24px;
+  --gap-7: 32px;
+  --gap-8: 40px;
+
+  /* --- Typographie --- */
+  --font-display: 'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'SF Mono', ui-monospace, 'Cascadia Mono', 'Roboto Mono', Menlo, monospace;
+
+  --t-xs: 0.6875rem;
+  --t-sm: 0.8125rem;
+  --t-base: 0.9375rem;
+  --t-md: 1.0625rem;
+  --t-lg: 1.25rem;
+  --t-xl: 1.5rem;
+  --t-2xl: 1.875rem;
+  --t-3xl: 2.25rem;
+
+  /* --- Transitions --- */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-fast: 120ms;
+  --dur: 200ms;
+  --dur-slow: 340ms;
+
+  /* --- Layout --- */
+  --shell-max: 1320px;
+  --rail-w: 264px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur: 0ms;
+    --dur-slow: 0ms;
+  }
+}

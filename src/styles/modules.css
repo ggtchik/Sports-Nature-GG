@@ -1,0 +1,536 @@
+/* ==========================================================================
+   Modules métier : tableaux, graphiques, carte, sélecteurs de spot…
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Tableaux (§19) — lisibles, aérés, chronologiques, tactiles
+   -------------------------------------------------------------------------- */
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--t-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.table thead th {
+  text-align: left;
+  padding: 9px var(--gap-4);
+  font-size: var(--t-xs);
+  font-weight: 650;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+  background: color-mix(in srgb, var(--sand-100) 70%, transparent);
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.table tbody td {
+  padding: 10px var(--gap-4);
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  color: var(--ink-700);
+  white-space: nowrap;
+}
+
+.table tbody tr:last-child td { border-bottom: none; }
+.table tbody tr:hover td { background: color-mix(in srgb, var(--sand-50) 80%, transparent); }
+.table tbody tr[data-now='true'] td { background: var(--forest-100); font-weight: 600; color: var(--forest-700); }
+
+.table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.table .strong { font-weight: 650; color: var(--ink-900); }
+
+/* Transformation en cartes sur mobile (§19) */
+@media (max-width: 640px) {
+  .table--cards thead { display: none; }
+  .table--cards tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--gap-1) var(--gap-3);
+    padding: var(--gap-3) var(--gap-4);
+    border-bottom: 1px solid var(--line);
+  }
+  .table--cards tbody tr:last-child { border-bottom: none; }
+  .table--cards tbody td {
+    border: none;
+    padding: 2px 0;
+    white-space: normal;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .table--cards tbody td::before {
+    content: attr(data-label);
+    font-size: 9.5px;
+    font-weight: 650;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-400);
+  }
+  .table--cards tbody td[data-label='Heure'],
+  .table--cards tbody td[data-label='Jour'] {
+    grid-column: 1 / -1;
+  }
+  .table--cards tbody td[data-label='Heure']::before,
+  .table--cards tbody td[data-label='Jour']::before { display: none; }
+}
+
+/* --------------------------------------------------------------------------
+   Graphiques (SVG maison)
+   -------------------------------------------------------------------------- */
+.chart { width: 100%; display: block; overflow: visible; }
+.chart__grid line { stroke: var(--line); stroke-width: 1; }
+.chart__axis text { fill: var(--ink-400); font-size: 9.5px; font-family: var(--font-body); }
+.chart__area { transition: opacity var(--dur) var(--ease); }
+.chart__line { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.chart__dot { transition: r var(--dur-fast) var(--ease); }
+.chart__label { fill: var(--ink-500); font-size: 9.5px; font-weight: 600; }
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-2) var(--gap-4);
+  font-size: var(--t-xs);
+  color: var(--ink-500);
+}
+.legend__item { display: inline-flex; align-items: center; gap: 5px; }
+.legend__swatch { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+/* Barre de jauge horizontale (UV, couverture, probabilité) */
+.gauge { display: flex; flex-direction: column; gap: 4px; }
+.gauge__track {
+  height: 7px;
+  border-radius: var(--r-pill);
+  background: var(--sand-200);
+  overflow: hidden;
+}
+.gauge__fill {
+  height: 100%;
+  border-radius: var(--r-pill);
+  transition: width var(--dur-slow) var(--ease);
+}
+.gauge__fill--forest { background: linear-gradient(90deg, var(--forest-300), var(--forest-600)); }
+.gauge__fill--water { background: linear-gradient(90deg, var(--water-300), var(--water-600)); }
+.gauge__fill--clay { background: linear-gradient(90deg, var(--clay-400), var(--clay-600)); }
+.gauge__fill--sky { background: linear-gradient(90deg, var(--sky-200), var(--sky-500)); }
+
+/* --------------------------------------------------------------------------
+   Carte (§14)
+   -------------------------------------------------------------------------- */
+.map {
+  height: 340px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--sand-100);
+  z-index: 0;
+}
+.map--tall { height: 420px; }
+.map--short { height: 240px; }
+
+@media (max-width: 640px) {
+  .map { height: 280px; }
+  .map--tall { height: 320px; }
+}
+
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-2) var(--gap-4);
+  font-size: var(--t-xs);
+  color: var(--ink-500);
+  margin-top: var(--gap-3);
+}
+
+.spot-marker {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 4px;
+  transform: rotate(-45deg);
+  background: linear-gradient(150deg, var(--forest-500), var(--forest-700));
+  border: 2px solid #fff;
+  box-shadow: 0 3px 10px rgba(30, 64, 52, 0.4);
+  font-size: 13px;
+}
+.spot-marker > span { transform: rotate(45deg); line-height: 1; }
+
+.origin-marker {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--clay-500);
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--clay-500) 28%, transparent), var(--shadow-sm);
+}
+
+.hydro-marker {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--water-500);
+  border: 2px solid #fff;
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.leaflet-tooltip.gg-tip {
+  background: var(--ink-900);
+  color: var(--sand-50);
+  border: none;
+  border-radius: var(--r-sm);
+  font-size: var(--t-xs);
+  font-weight: 600;
+  padding: 4px 8px;
+  box-shadow: var(--shadow-md);
+}
+.leaflet-tooltip.gg-tip::before { border-top-color: var(--ink-900); }
+
+/* --------------------------------------------------------------------------
+   Grille des activités (§24, étape 2)
+   -------------------------------------------------------------------------- */
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--gap-3);
+}
+
+.activity-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: var(--gap-4);
+  border-radius: var(--r-lg);
+  border: 1px solid var(--line);
+  background: var(--card);
+  text-align: left;
+  transition:
+    transform var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease),
+    border-color var(--dur) var(--ease);
+}
+.activity-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--sand-400);
+}
+.activity-card[aria-pressed='true'] {
+  border-color: var(--forest-400);
+  background: linear-gradient(165deg, var(--forest-100), var(--card));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--forest-300) 28%, transparent);
+}
+.activity-card__emoji { font-size: 24px; line-height: 1; }
+.activity-card__label { font-family: var(--font-display); font-weight: 700; font-size: var(--t-base); color: var(--ink-900); }
+.activity-card__tag { font-size: var(--t-xs); color: var(--ink-500); }
+
+/* --------------------------------------------------------------------------
+   Recherche de lieu / résultats
+   -------------------------------------------------------------------------- */
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: var(--gap-3);
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.result {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-3);
+  padding: 10px var(--gap-3);
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  background: transparent;
+  text-align: left;
+  width: 100%;
+  transition: background var(--dur-fast) var(--ease);
+}
+.result:hover { background: var(--sand-100); border-color: var(--line); }
+.result[aria-pressed='true'] { background: var(--forest-100); border-color: var(--forest-200); }
+.result__icon {
+  width: 30px; height: 30px;
+  border-radius: 9px;
+  background: var(--sand-100);
+  display: grid; place-items: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.result__body { min-width: 0; flex: 1; }
+.result__title { font-size: var(--t-sm); font-weight: 600; color: var(--ink-900); }
+.result__meta { font-size: var(--t-xs); color: var(--ink-500); }
+
+/* --------------------------------------------------------------------------
+   Liste des spots enregistrés
+   -------------------------------------------------------------------------- */
+.spot-list { display: flex; flex-direction: column; gap: var(--gap-2); }
+
+.spot-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-3);
+  padding: var(--gap-3) var(--gap-4);
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: var(--card);
+  transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
+}
+.spot-item:hover { border-color: var(--sand-400); box-shadow: var(--shadow-xs); }
+.spot-item--active { border-color: var(--forest-400); background: linear-gradient(165deg, var(--forest-100), var(--card)); }
+.spot-item__body { flex: 1; min-width: 0; }
+.spot-item__name { font-weight: 650; font-size: var(--t-sm); color: var(--ink-900); }
+.spot-item__meta { font-size: var(--t-xs); color: var(--ink-500); }
+.spot-item__actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+/* --------------------------------------------------------------------------
+   Tableau des frais (§15)
+   -------------------------------------------------------------------------- */
+.cost-table { width: 100%; border-collapse: collapse; font-size: var(--t-sm); }
+.cost-table th, .cost-table td { padding: 8px var(--gap-3); text-align: left; }
+.cost-table thead th {
+  font-size: var(--t-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-500);
+  border-bottom: 1px solid var(--line);
+}
+.cost-table tbody td { border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent); }
+.cost-table tbody tr:last-child td { border-bottom: none; }
+.cost-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.cost-table tfoot td {
+  padding-top: var(--gap-3);
+  font-weight: 700;
+  color: var(--ink-900);
+  border-top: 2px solid var(--line-strong);
+  font-size: var(--t-md);
+}
+
+.cost-input {
+  width: 78px;
+  padding: 5px 8px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--card-raised);
+  font-size: var(--t-sm);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.cost-input:focus {
+  outline: none;
+  border-color: var(--forest-400);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--forest-300) 30%, transparent);
+}
+
+/* --------------------------------------------------------------------------
+   Sources (§17)
+   -------------------------------------------------------------------------- */
+.source-list { display: flex; flex-direction: column; gap: var(--gap-2); }
+
+.source-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-3);
+  padding: 9px var(--gap-3);
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: var(--card-raised);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+}
+.source-item:hover { border-color: var(--forest-300); background: var(--forest-100); }
+.source-item__body { flex: 1; min-width: 0; }
+.source-item__label { font-size: var(--t-sm); font-weight: 600; color: var(--ink-900); }
+.source-item__meta { font-size: var(--t-xs); color: var(--ink-500); }
+.source-item__arrow { color: var(--ink-400); flex-shrink: 0; }
+
+/* --------------------------------------------------------------------------
+   Bandeau de synthèse du spot (§18)
+   -------------------------------------------------------------------------- */
+.hero {
+  position: relative;
+  border-radius: var(--r-2xl);
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(160deg, rgba(219, 234, 225, 0.9), rgba(253, 251, 247, 0.6) 55%),
+    var(--card);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  right: -60px;
+  top: -80px;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--clay-400) 22%, transparent), transparent 70%);
+  pointer-events: none;
+}
+
+.hero__inner {
+  position: relative;
+  z-index: 1;
+  padding: var(--gap-6);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-5);
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.hero__spot { display: flex; flex-direction: column; gap: var(--gap-2); min-width: 0; }
+.hero__eyebrow {
+  font-size: var(--t-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--forest-500);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.hero__title {
+  font-size: var(--t-3xl);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  color: var(--ink-900);
+}
+.hero__meta { display: flex; flex-wrap: wrap; gap: var(--gap-2); }
+.hero__side { display: flex; flex-direction: column; gap: var(--gap-3); align-items: flex-end; }
+
+@media (max-width: 720px) {
+  .hero__inner { padding: var(--gap-5); flex-direction: column; }
+  .hero__side { align-items: stretch; width: 100%; }
+  .hero__title { font-size: var(--t-2xl); }
+}
+
+/* --------------------------------------------------------------------------
+   Frise « journée » (§8)
+   -------------------------------------------------------------------------- */
+.dayline {
+  display: flex;
+  gap: 0;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.dayline__seg { flex: 1; height: 8px; }
+.dayline__seg--night { background: var(--sand-300); }
+.dayline__seg--dawn { background: linear-gradient(90deg, var(--sand-300), var(--clay-200)); }
+.dayline__seg--day { background: linear-gradient(90deg, var(--clay-200), var(--sky-200), var(--clay-200)); }
+.dayline__seg--dusk { background: linear-gradient(90deg, var(--clay-200), var(--sand-300)); }
+
+/* --------------------------------------------------------------------------
+   Astronomie (§7)
+   -------------------------------------------------------------------------- */
+.sunarc { position: relative; }
+.moon {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: var(--sand-200);
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.moon__lit {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fffdf6, var(--sand-200));
+}
+.moon__shadow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--ink-900);
+  opacity: 0.82;
+}
+.moon__craters { position: absolute; inset: 0; opacity: 0.5; }
+
+/* --------------------------------------------------------------------------
+   Réglages
+   -------------------------------------------------------------------------- */
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--gap-4);
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-3);
+  cursor: pointer;
+  font-size: var(--t-sm);
+  user-select: none;
+}
+.toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.toggle__track {
+  width: 40px;
+  height: 23px;
+  border-radius: var(--r-pill);
+  background: var(--sand-300);
+  position: relative;
+  transition: background var(--dur) var(--ease);
+  flex-shrink: 0;
+}
+.toggle__track::after {
+  content: '';
+  position: absolute;
+  top: 2.5px;
+  left: 2.5px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--shadow-xs);
+  transition: transform var(--dur) var(--ease);
+}
+.toggle input:checked + .toggle__track { background: var(--forest-500); }
+.toggle input:checked + .toggle__track::after { transform: translateX(17px); }
+.toggle input:focus-visible + .toggle__track { outline: 2px solid var(--forest-500); outline-offset: 2px; }
+
+/* --------------------------------------------------------------------------
+   Divers
+   -------------------------------------------------------------------------- */
+.divider { height: 1px; background: var(--line); border: none; margin: var(--gap-4) 0; }
+
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 6px var(--gap-4); font-size: var(--t-sm); }
+.kv dt { color: var(--ink-500); }
+.kv dd { margin: 0; text-align: right; font-weight: 600; color: var(--ink-900); font-variant-numeric: tabular-nums; }
+
+.fade-in { animation: fadeIn var(--dur-slow) var(--ease) both; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+.stagger > * { animation: fadeIn var(--dur-slow) var(--ease) both; }
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 40ms; }
+.stagger > *:nth-child(3) { animation-delay: 80ms; }
+.stagger > *:nth-child(4) { animation-delay: 120ms; }
+.stagger > *:nth-child(5) { animation-delay: 160ms; }
+.stagger > *:nth-child(6) { animation-delay: 200ms; }
+.stagger > *:nth-child(7) { animation-delay: 240ms; }
+.stagger > *:nth-child(8) { animation-delay: 280ms; }
